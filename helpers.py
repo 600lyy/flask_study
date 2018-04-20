@@ -1,9 +1,8 @@
-<<<<<<< HEAD
 import os
-=======
->>>>>>> edb62659621eb1f5efb1325a82f973743356f27b
+import sys
 from functools import update_wrapper
 from types import MethodType
+from types import FunctionType
 
 
 class Decorators(object):
@@ -22,15 +21,27 @@ class Decorators(object):
                     'first request was handled.  This usually indicates a bug'
                 )
             return f(obj, *args, **kwargs)
-<<<<<<< HEAD
         return update_wrapper(wrapper_func, f)
 
+    class _Funcwrap(object):
+        """Wraps a method and return an callable object
+        """
+        def __init__(self, f):
+            if isinstance(f, FunctionType):
+                self.f = f
+            else:
+                raise AssertionError('{} is not a function'.format(f.__class__))
+        
+        def __call__(self, *args, **kwargs):
+            return self.f(*args, **kwargs)
 
+
+@Decorators._Funcwrap
 def get_root_path(import_name):
     """Returns the path to a package. this returns the path of a package or
     the folder that contains a module
     """
+    mod = sys.modules.get(import_name)
+    if mod is not None and hasattr(mod, '__file__'):
+        return os.path.dirname(os.path.abspath(mod.__file__))
     
-=======
-        return update_wrapper(wrapper_func, f)
->>>>>>> edb62659621eb1f5efb1325a82f973743356f27b

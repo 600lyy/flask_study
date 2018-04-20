@@ -22,11 +22,8 @@ class My_property(object):
         
 
 class ConfigAttribute(object):
-<<<<<<< HEAD
     """An implementation of property
     """
-=======
->>>>>>> edb62659621eb1f5efb1325a82f973743356f27b
     def __init__(self, name):
         self.__name__ = name
 
