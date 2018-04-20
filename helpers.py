@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 import os
+=======
+>>>>>>> edb62659621eb1f5efb1325a82f973743356f27b
 from functools import update_wrapper
 from types import MethodType
 
@@ -19,6 +22,7 @@ class Decorators(object):
                     'first request was handled.  This usually indicates a bug'
                 )
             return f(obj, *args, **kwargs)
+<<<<<<< HEAD
         return update_wrapper(wrapper_func, f)
 
 
@@ -27,3 +31,6 @@ def get_root_path(import_name):
     the folder that contains a module
     """
     
+=======
+        return update_wrapper(wrapper_func, f)
+>>>>>>> edb62659621eb1f5efb1325a82f973743356f27b
