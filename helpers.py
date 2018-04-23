@@ -44,4 +44,11 @@ def get_root_path(import_name):
     mod = sys.modules.get(import_name)
     if mod is not None and hasattr(mod, '__file__'):
         return os.path.dirname(os.path.abspath(mod.__file__))
-    
+
+
+def _endpoint_from_view_func(view_func):
+    """Returns the default endpoint for a given function.
+    """
+    assert isinstance(view_func, FunctionType), 'view_func must be a function' \
+                                                'but {} got'.format(type(view_func))
+    return view_func.__name__
