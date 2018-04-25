@@ -121,6 +121,14 @@ class Flask(object):
     def __call__(self, environ, start_response):
         return self.wsgi_app(environ, start_response)
 
-
     def wsgi_app(self, environ, start_response):
-        pass    
+        """Actual WSGI Applicaiton
+        """
+        try:
+            rv = self.full_dispatch_request()
+        except Exception as e:
+            raise
+        
+
+    def full_dispatch_request(self):
+        pass
