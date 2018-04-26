@@ -9,6 +9,8 @@ from .config import Config
 from .helpers import Decorators
 from .helpers import get_root_path
 from .helpers import _endpoint_from_view_func
+from .wrapper import Request
+from .ctx import RequestContext
 
 # a lock used for logger initialization
 _logger_lock = Lock()
@@ -22,11 +24,14 @@ class Flask(object):
     application.  Once it is created it will act as a central registry for
     the view functions, the URL rules, template configuration and much more.
     """
+
     debug = ConfigAttribute('DEBUG')
 
     logger_name = ConfigAttribute('LOGGER_NAME')
 
     config_class = Config
+
+    request_class = Request
 
     url_rule_class = Rule
 
@@ -37,13 +42,13 @@ class Flask(object):
         'MAX_CONTENT_LENGTH':   None,
     }
 
-    def __init__(self, import_name, instance_relative_config, root_path=None):
+    def __init__(self, import_name, instance_relative_config=False, root_path=None):
         self.__name__ = import_name
-        self.logger_name = import_name
-        self._got_first_request = False
         if root_path is None:
             self.root_path = get_root_path(import_name)
         self.config = self.make_config(instance_relative_config)
+        self.logger_name = import_name
+        self._got_first_request = False
 
         #: A dictionary of all view functions registered.  The keys will
         #: be function names which are also used to generate URLs and
@@ -97,14 +102,14 @@ class Flask(object):
     def route(self, rule, **options):
         """A decorator that is used to register a view function for a
         given URL rule.
-        """"
-        def wrapper(f):
+        """
+        def wrapper(func):
             endpoint = options.pop('endpoint', None)
-            self.add_url_rule(rule, endpoint, func)
-            return f
+            self.add_url_rule(rule, endpoint, func, **options)
+            return func
         return wrapper
 
-    @setupmethod
+    @D.setupmethod
     def endpoint(self, endpoint):
         """A decorator to register a function as an endpoint.
         Example::
@@ -124,11 +129,18 @@ class Flask(object):
     def wsgi_app(self, environ, start_response):
         """Actual WSGI Applicaiton
         """
+        req = self.request_context(environ)
         try:
             rv = self.full_dispatch_request()
         except Exception as e:
             raise
         
+
+    def request_context(self, environ):
+        """Creates a ctx.RequestContext object
+        :param environ: a WSGI environment
+        """
+        return RequestContext(self, environ)
 
     def full_dispatch_request(self):
         pass

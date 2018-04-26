@@ -1,10 +1,12 @@
 import os
 import sys
-from functools import update_wrapper
+from functools import update_wrapper, wraps
 from types import MethodType
 from types import FunctionType
 
 from .config import Property
+
+__all__ = ['Decorators']
 
 
 class Decorators(object):
@@ -39,6 +41,9 @@ class Decorators(object):
 
     class Cached_Property(Property):
         """A decorator that converts a function into a lazy property
+        so the function will be only called once and the returned
+        value is saved in objs.__dict__ which is to be red directly
+        next time
         """
         def __init__(self, fget, name=None, doc=None):
             if not isinstance(fget, (FunctionType, MethodType)):
