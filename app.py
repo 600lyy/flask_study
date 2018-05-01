@@ -132,7 +132,7 @@ class Flask(object):
         req = self.request_context(environ)
         try:
             rv = self.full_dispatch_request()
-        except Exception as e:
+        except Exception:
             raise
         
 
@@ -143,4 +143,15 @@ class Flask(object):
         return RequestContext(self, environ)
 
     def full_dispatch_request(self):
-        pass
+        """Dispatches the request and on top of that performs request
+        pre and postprocessing
+        """
+
+    def create_url_adapter(self, request):
+        """Creates a URL adapter for the given request
+        """
+        if request is not None:
+            return self.url_map.bind_to_environ(
+                environ=request.environ,
+                server_name=self.config['SERVER_NAME'],
+            )
